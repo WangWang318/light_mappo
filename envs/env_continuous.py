@@ -13,6 +13,8 @@ class ContinuousActionEnv(object):
     def __init__(self):
         self.env = EnvCore()
         self.num_agent = self.env.agent_num
+        self.num_enemy = self.env.enemy_num
+        self.num_teammate = self.env.teammate_num
 
         self.signal_obs_dim = self.env.obs_dim
         self.signal_action_dim = self.env.action_dim
@@ -30,10 +32,12 @@ class ContinuousActionEnv(object):
         share_obs_dim = 0
         total_action_space = []
         for agent in range(self.num_agent):
+            print("agent {}".format(agent))
+
             # physical action space
             u_action_space = spaces.Box(
-                low=-np.inf,
-                high=+np.inf,
+                low=-1,
+                high=+1,
                 shape=(self.signal_action_dim,),
                 dtype=np.float32,
             )
@@ -48,8 +52,8 @@ class ContinuousActionEnv(object):
             share_obs_dim += self.signal_obs_dim
             self.observation_space.append(
                 spaces.Box(
-                    low=-np.inf,
-                    high=+np.inf,
+                    low=0,
+                    high=10,
                     shape=(self.signal_obs_dim,),
                     dtype=np.float32,
                 )
@@ -57,7 +61,7 @@ class ContinuousActionEnv(object):
 
         self.share_observation_space = [
             spaces.Box(
-                low=-np.inf, high=+np.inf, shape=(share_obs_dim,), dtype=np.float32
+                low=0, high=10, shape=(share_obs_dim,), dtype=np.float32
             )
             for _ in range(self.num_agent)
         ]
@@ -72,7 +76,9 @@ class ContinuousActionEnv(object):
         # actions shape = (5, 2, 5)
         # 5 threads of environment, there are 2 agents inside, and each agent's action is a 5-dimensional one_hot encoding
         """
-
+        # print("actions shape --------")
+        # print(len(actions))
+        # print(len(actions[1]))
         results = self.env.step(actions)
         obs, rews, dones, infos = results
         return np.stack(obs), np.stack(rews), np.stack(dones), infos

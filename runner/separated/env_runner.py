@@ -38,6 +38,7 @@ class EnvRunner(Runner):
                     actions_env,
                 ) = self.collect(step)
 
+                print("step {}, episode {}".format(step, episode))
                 # Obser reward and next obs
                 obs, rewards, dones, infos = self.envs.step(actions_env)
 
@@ -71,7 +72,7 @@ class EnvRunner(Runner):
             if episode % self.log_interval == 0:
                 end = time.time()
                 print(
-                    "\n Scenario {} Algo {} Exp {} updates {}/{} episodes, total num timesteps {}/{}, FPS {}.\n".format(
+                    "\n (Seperated) Scenario {} Algo {} Exp {} updates {}/{} episodes, total num timesteps {}/{}, FPS {}.\n".format(
                         self.all_args.scenario_name,
                         self.algorithm_name,
                         self.experiment_name,
@@ -83,13 +84,16 @@ class EnvRunner(Runner):
                     )
                 )
 
-                if self.env_name == "MPE":
+                # if self.env_name == "MPE":
+                if True:
                     for agent_id in range(self.num_agents):
                         idv_rews = []
                         for info in infos:
                             if "individual_reward" in info[agent_id].keys():
+                                print("-----hello1------")
                                 idv_rews.append(info[agent_id]["individual_reward"])
-                        train_infos[agent_id].update({"individual_rewards": np.mean(idv_rews)})
+                            # print("-----hello22222222------")
+                        # train_infos[agent_id].update({"individual_rewards": np.mean(idv_rews)})
                         train_infos[agent_id].update(
                             {
                                 "average_episode_rewards": np.mean(self.buffer[agent_id].rewards)

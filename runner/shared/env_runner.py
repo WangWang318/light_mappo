@@ -32,7 +32,6 @@ class EnvRunner(Runner):
         for episode in range(episodes):
             if self.use_linear_lr_decay:
                 self.trainer.policy.lr_decay(episode, episodes)
-
             for step in range(self.episode_length):
                 # Sample actions
                 (
@@ -77,7 +76,7 @@ class EnvRunner(Runner):
             if episode % self.log_interval == 0:
                 end = time.time()
                 print(
-                    "\n Scenario {} Algo {} Exp {} updates {}/{} episodes, total num timesteps {}/{}, FPS {}.\n".format(
+                    "\n Hello! Scenario {} Algo {} Exp {} updates {}/{} episodes, total num timesteps {}/{}, FPS {}.\n".format(
                         self.all_args.scenario_name,
                         self.algorithm_name,
                         self.experiment_name,
@@ -88,16 +87,6 @@ class EnvRunner(Runner):
                         int(total_num_steps / (end - start)),
                     )
                 )
-
-                # if self.env_name == "MPE":
-                #     env_infos = {}
-                #     for agent_id in range(self.num_agents):
-                #         idv_rews = []
-                #         for info in infos:
-                #             if 'individual_reward' in info[agent_id].keys():
-                #                 idv_rews.append(info[agent_id]['individual_reward'])
-                #         agent_k = 'agent%i/individual_rewards' % agent_id
-                #         env_infos[agent_k] = idv_rews
 
                 train_infos["average_episode_rewards"] = np.mean(self.buffer.rewards) * self.episode_length
                 print("average episode rewards is {}".format(train_infos["average_episode_rewards"]))
